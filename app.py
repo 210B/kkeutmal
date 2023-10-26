@@ -3,20 +3,19 @@ from flask import *
 import json
 from flask_cors import CORS, cross_origin
 from kkeut.Hangulize import Hanguel
-from kkeut.get_word import findword
+from kkeut.get_word import Find
 
 app = Flask(__name__)
 cors = CORS(app)
 
 kkeut_log = []
 
-lang = 'spa'
 
 
 def get_next(quest):
 
     quest = quest
-    ret_data = findword(quest)
+    ret_data = Find.findword(quest)
     kkeut_log.append(ret_data)
 
     return ret_data
@@ -35,13 +34,14 @@ def get_hangulize(lang, user):
 
     # get hangulized word
     quest = Hanguel.generate_hanguel(lang,user)
+    print(quest)
 
     if kkeut_log:
         # 유저가 이미 답한 적 있는 답을 입력했을 때
         if quest in kkeut_log:
             ret_data = {
-                "hangulize":"",
-                "reply":"err1"
+                "hangulize": "",
+                "reply": "이미 답한 적 있는 단어입니다."
             }
 
         else:
@@ -52,8 +52,8 @@ def get_hangulize(lang, user):
                 # pc가 유효한 답을 냈을 때
                 if kkeut_log[-1][-1] == reply[-1]:
                     ret_data = {
-                        "hangulize":quest,
-                        "reply":reply
+                        "hangulize": quest,
+                        "reply": reply
                     }
                 # pc가 졌을 때
                 else:
@@ -64,13 +64,13 @@ def get_hangulize(lang, user):
             # 유효하지 않을 때
             else:
                 ret_data = {
-                    "hangulize":quest,
-                    "reply":"err2"
+                    "hangulize": quest,
+                    "reply": "앞의 단어와 이어지는 단어를 입력해주세요."
                 }
     # 시작
     else:
         kkeut_log.append(quest)
-        reply = get_next(quest)
+        reply = get_next(quest[-1])
         # pc가 유효한 답을 냈을 때
         if kkeut_log[-1][-1] == reply[-1]:
             ret_data = {
@@ -92,18 +92,13 @@ def get_hangulize(lang, user):
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        data = request.json
-        if 'lang' in data and 'user' in data:
-            lang = data['lang']
-            user = data['user']
-            result = get_hangulize(lang, user)
-            return jsonify(result)
-        else:
-            return jsonify({"error": "Invalid data format."})
+        user = request.form['word']  # 사용자로부터 단어 입력 받음
+        lang = 'spa'  # lang 값을 "spa"로 하드 코딩
+        result = get_hangulize(lang, user)
+        return render_template('home.html', response=result)
     else:
-        return jsonify({"error": "Unsupported HTTP method."})
-
-
+        # GET 요청일 때는 home.html 렌더링
+        return render_template('home.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Kkeutmal-끝말잇기</title>
+</head>
+<body>
+    <h1>Kkeutmal-끝말잇기</h1>
+    <form action="/home" method="POST">
+        <label for="word_input">Enter a word:</label>
+        <input type="text" id="word_input" name="word" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if response %}
+    <h2>Response:</h2>
+    <p>Word: {{ user_input }}</p>
+    <p>Hangulize: {{ response.hangulize }}</p>
+    <p>Reply: {{ response.reply }}</p>
+    {% endif %}
+</body>
+</html>
+

@@ -9,7 +9,7 @@ def findword(query):
     url = "https://stdict.korean.go.kr/api/search.do"
     params = {
         "certkey_no": "6091",
-        "key": "BD84DD0E325A3FBD8AD6E350051717DE",
+        "key": "",
         "type_search": "word",
         "req_type": "json",
         "q": query,

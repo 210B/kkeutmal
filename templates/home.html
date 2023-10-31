@@ -14,10 +14,15 @@
 
     {% if response %}
     <h2>Response:</h2>
-    <p>Word: {{ user_input }}</p>
+    <p>Word: {{ user }}</p>
     <p>Hangulize: {{ response.hangulize }}</p>
     <p>Reply: {{ response.reply }}</p>
+    {% if response.reply %}
+    <audio controls>
+        <source src="/static/response.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    {% endif %}
     {% endif %}
 </body>
 </html>
-

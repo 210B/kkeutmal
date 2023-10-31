@@ -4,6 +4,9 @@ import json
 from flask_cors import CORS, cross_origin
 from kkeut.Hangulize import Hanguel
 from kkeut.get_word import Find
+from gtts import gTTS
+import os
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -55,6 +58,7 @@ def get_hangulize(lang, user):
                         "hangulize": quest,
                         "reply": reply
                     }
+                    kkeut_log.append(reply)
                 # pc가 졌을 때
                 else:
                     ret_data = {
@@ -77,6 +81,7 @@ def get_hangulize(lang, user):
                 "hangulize": quest,
                 "reply": reply
             }
+            kkeut_log.append(reply)
         # pc가 졌을 때
         else:
             ret_data = {
@@ -87,18 +92,25 @@ def get_hangulize(lang, user):
     return ret_data
 
 
+def text_to_speech(text, lang='en'):
+    tts = gTTS(text=text, lang=lang)
+    tts.save('response.mp3')
 
-# API
+
+app = Flask(__name__, static_url_path='/static')
+
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
         user = request.form['word']  # 사용자로부터 단어 입력 받음
         lang = 'spa'  # lang 값을 "spa"로 하드 코딩
         result = get_hangulize(lang, user)
+        text_to_speech(result['reply'], "ko")  # 응답 텍스트를 음성으로 변환
         return render_template('home.html', response=result)
     else:
         # GET 요청일 때는 home.html 렌더링
         return render_template('home.html')
+
 
 
 if __name__ == '__main__':

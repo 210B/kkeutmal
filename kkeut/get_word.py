@@ -1,5 +1,6 @@
 from flask import request, json
 import random
+import requests
 
 class Find:
     def findword(query):
@@ -22,7 +23,7 @@ class Find:
             "letter_s": 3,
             "letter_e": 5
         }
-        response = request.get(url, params=params)
+        response = requests.get(url, params=params)
 
         # JSON 응답 파싱
         if response.status_code == 200:
